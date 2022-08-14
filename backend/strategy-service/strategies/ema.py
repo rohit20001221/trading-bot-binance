@@ -1,4 +1,4 @@
-from strategy import Strategy
+from entities.strategy import Strategy
 from talib.abstract import EMA, SMA
 import numpy as np
 from binance.enums import ORDER_TYPE_MARKET, SIDE_BUY, SIDE_SELL

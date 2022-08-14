@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  live-data:
+    build: ./live-data-service
+    env_file:
+      - .env
+  strategies:
+    build: ./strategy-service
+    env_file:
+      - .env
