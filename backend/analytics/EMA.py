@@ -19,7 +19,7 @@ client = Client(API_KEY, API_SECRET)
 # In[10]:
 
 
-candles = client.get_klines(symbol='BATUSDT', interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
+candles = client.get_klines(symbol='BTCUSDT', interval=Client.KLINE_INTERVAL_5MINUTE, limit=1000)
 
 
 # In[11]:
