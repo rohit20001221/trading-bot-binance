@@ -1,15 +1,13 @@
 import json
 from binance.client import Client
-import redis
+from redis_om import get_redis_connection
 import numpy as np
-import subprocess
 
 class Strategy:
     def __init__(self, api_key: str, api_secret: str, name: str, redis_host='redis_server', redis_port=6379) -> None:
-        self.test_client : Client = Client(api_key, api_secret, testnet=True)
         self.client : Client = Client(api_key, api_secret)
 
-        self.redis = redis.Redis(
+        self.redis = get_redis_connection(
             host=redis_host,
             port=redis_port,
             decode_responses=True
@@ -24,9 +22,6 @@ class Strategy:
 
     def handle_live_data(self, live):
         raise NotImplementedError("not implemented handle_kline_data")
-
-    def notify(self, title, message):
-        subprocess.call(["notify-send", title, message])
 
     def start(self):
         for message in self.pubsub.listen():

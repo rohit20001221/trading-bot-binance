@@ -66,11 +66,6 @@ class EMAStrategy(Strategy):
 
                     self.current_stop_loss = stop_loss
                     self.positions[live['symbol']] += quantity
-
-                    self.notify(
-                        "order placed",
-                        f"ENTRY:- {quantity} {live['close']} {stop_loss}"
-                    )
                 except:
                     self.current_stop_loss = 0
 
@@ -92,11 +87,6 @@ class EMAStrategy(Strategy):
             finally:
                 self.positions.pop(live['symbol'])
                 self.current_stop_loss = 0
-
-                self.notify(
-                    "order placed",
-                    f"EXIT:- {quantity} {live['close']} REASON:- Stop Loss"
-                )
 
 if __name__ == '__main__':
     API_KEY=os.environ['API_KEY']

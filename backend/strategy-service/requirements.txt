@@ -5,3 +5,5 @@ redis
 redis-om
 python-binance
 binance-futures-connector
+grpcio
+grpcio-tools

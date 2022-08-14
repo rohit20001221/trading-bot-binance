@@ -1,21 +1,35 @@
-version: '3.9'
+version: '3.8'
 
 services:
   live-data:
-    build: ./live-data-service
+    build:
+      context: .
+      dockerfile: live-data-service/Dockerfile
     env_file:
-      - ./live-data-service/.env
+      - live-data-service/.env
     volumes:
-      - ./live-data-service:/app
+      - live-data-service:/app
+
   strategies:
-    build: ./strategy-service
+    build:
+      context: .
+      dockerfile: strategy-service/Dockerfile
     volumes:
-      - ./strategy-service:/app
+      - strategy-service:/app
     env_file:
-      - ./strategy-service/.env
+      - strategy-service/.env
+
+  portfolio:
+    build:
+      context: .
+      dockerfile: portfolio-service/Dockerfile
+    volumes:
+      - portfolio-service:/app
+
   redis_server:
     image: redis/redis-stack:latest
-
+    ports:
+      - "8002:8001"
     volumes:
       - redis_cache:/data
 

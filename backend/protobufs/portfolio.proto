@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+message Position {
+    string symbol = 1;
+    double quantity = 2;
+}
+
+message GetPositionRequest {
+    string symbol = 1;
+}
+
+message OrderRequest {
+    string symbol = 1;
+    string type = 2;
+    string side = 3;
+    double quantity = 4;
+    double stoploss = 5;
+    string channel_name = 6;
+}
+
+message OrderResponse {
+    string pk = 1;
+}
+
+service PortfolioService {
+    rpc UpdatePosition(Position) returns (Position);
+    rpc GetPosition (GetPositionRequest) returns (Position);
+    rpc CreateOrder (OrderRequest) returns (OrderResponse);
+}

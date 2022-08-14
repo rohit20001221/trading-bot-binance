@@ -24,10 +24,12 @@ ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY strategy-service .
 
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY protobufs /protobufs
+
+RUN python -m grpc_tools.protoc -I /protobufs --python_out=/app --grpc_python_out=/app /protobufs/portfolio.proto
 
 CMD [ "python", "init.py" ]
