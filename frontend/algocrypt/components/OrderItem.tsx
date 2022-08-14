@@ -1,11 +1,12 @@
 import { FC } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 export type OrderItemProps = {
   status?: "buy" | "sell";
   asset?: string;
   quantity?: number;
+  onPress?: () => void;
 };
 
 const COLORS = {
@@ -13,7 +14,12 @@ const COLORS = {
   sell: "#e74c3c",
 };
 
-const OrderItem: FC<OrderItemProps> = ({ status = "buy", asset, quantity }) => {
+const OrderItem: FC<OrderItemProps> = ({
+  status = "buy",
+  asset,
+  quantity,
+  onPress,
+}) => {
   return (
     <View style={styles.container}>
       <View style={{ ...styles.status, ...styles[status] }}></View>
@@ -24,7 +30,9 @@ const OrderItem: FC<OrderItemProps> = ({ status = "buy", asset, quantity }) => {
         <Text style={styles.qty}>Qty: {quantity}</Text>
       </View>
       <View style={styles.action}>
-        <AntDesign name="rightcircleo" size={24} color={COLORS[status]} />
+        <TouchableWithoutFeedback onPress={onPress}>
+          <AntDesign name="rightcircleo" size={24} color={COLORS[status]} />
+        </TouchableWithoutFeedback>
       </View>
     </View>
   );

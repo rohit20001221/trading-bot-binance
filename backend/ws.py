@@ -5,7 +5,7 @@ import json
 from redis import Redis
 
 socket_address = 'wss://stream.binance.com:9443'
-symbol = 'shibusdt'
+symbol = 'btcusdt'
 interval = '5m'
 
 binance_endpoint = socket_address + '/ws/' + symbol + '@' + 'kline_' + interval

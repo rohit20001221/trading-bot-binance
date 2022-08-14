@@ -10,7 +10,8 @@ export type IRoute = {
 
 type INavigationContext = {
   routes: IRoute;
-  navigate: (route: string) => void;
+  navigate: (route: string, props?: Record<string, unknown>) => void;
+  params?: Record<string, unknown>;
 };
 
 type NavigationProviderProps = {
@@ -26,13 +27,18 @@ export const NavigationContext = createContext<INavigationContext>({
 
 export const NavigationProvider: FC<NavigationProviderProps> = ({ routes }) => {
   const [currentRoute, setCurrentRoute] = useState(Object.keys(routes)[0]);
+  const [navigationProps, setNavigationProps] =
+    useState<Record<string, unknown>>();
 
-  const navigate: INavigationContext["navigate"] = (route) => {
+  const navigate: INavigationContext["navigate"] = (route, props) => {
     setCurrentRoute(route);
+    setNavigationProps(props);
   };
 
   return (
-    <NavigationContext.Provider value={{ routes, navigate }}>
+    <NavigationContext.Provider
+      value={{ routes, navigate, params: navigationProps }}
+    >
       <StatusBar />
       {currentRoute && routes[currentRoute].header}
       {currentRoute && routes[currentRoute].component}
