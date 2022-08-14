@@ -22,8 +22,27 @@ message OrderResponse {
     string pk = 1;
 }
 
+message ClearPositionRequest {
+    string symbol = 1;
+}
+
+message ClearPositionResponse {
+    bool status = 1;
+}
+
+message StopLossHitCountRequest {}
+
+message IncrementStopLossHitRequest {}
+
+message StopLossHitResponse {
+    int32 stop_loss_hit_count = 1;
+}
+
 service PortfolioService {
     rpc UpdatePosition(Position) returns (Position);
     rpc GetPosition (GetPositionRequest) returns (Position);
+    rpc ClearPosition(ClearPositionRequest) returns (ClearPositionResponse);
     rpc CreateOrder (OrderRequest) returns (OrderResponse);
+    rpc GetStopLossHitCount (StopLossHitCountRequest) returns (StopLossHitResponse);
+    rpc IncrementStopLoss (IncrementStopLossHitRequest) returns (StopLossHitResponse);
 }

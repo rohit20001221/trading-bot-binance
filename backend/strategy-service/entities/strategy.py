@@ -2,6 +2,9 @@ import json
 from binance.client import Client
 from redis_om import get_redis_connection
 import numpy as np
+import grpc
+from portfolio_pb2_grpc import PortfolioServiceStub
+
 
 class Strategy:
     def __init__(self, api_key: str, api_secret: str, name: str, redis_host='redis_server', redis_port=6379) -> None:
@@ -16,6 +19,9 @@ class Strategy:
 
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(self.name)
+
+        self.portfolio_grpc_channel = grpc.insecure_channel("portfolio:50051", )
+        self.portfolio_client = PortfolioServiceStub(self.portfolio_grpc_channel)
 
     def handle_kline_data(self, klines, live):
         raise NotImplementedError("not impleted handle_live_data")

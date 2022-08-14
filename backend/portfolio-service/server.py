@@ -5,6 +5,8 @@ import grpc
 from portfolio_pb2 import (
     OrderResponse,
     Position,
+    ClearPositionResponse,
+    StopLossHitResponse,
 )
 
 from models import OrderModel
@@ -56,6 +58,33 @@ class PortfolioService(portfolio_pb2_grpc.PortfolioServiceServicer):
         order.save()
 
         return OrderResponse(pk=order.pk)
+
+    def ClearPosition(self, request, context):
+        redis.delete(request.symbol)
+
+        return ClearPositionResponse(status=True)
+
+    def GetStopLossHitCount(self, request, context):
+        stop_loss_hit_count = redis.get("stop_loss_hit_count")
+
+        if stop_loss_hit_count == None:
+            stop_loss_hit_count = 0
+            redis.set("stop_loss_hit_count", 0)
+
+        return StopLossHitResponse(stop_loss_hit_count=stop_loss_hit_count)
+
+    def IncrementStopLoss(self, request, context):
+        stop_loss_hit_count = redis.get("stop_loss_hit_count")
+
+        if stop_loss_hit_count == None:
+            stop_loss_hit_count = 0
+        else:
+            stop_loss_hit_count = int(stop_loss_hit_count)
+
+        redis.set("stop_loss_hit_count", stop_loss_hit_count + 1)
+
+        stop_loss_hit_count = int(redis.get("stop_loss_hit_count"))
+        return StopLossHitResponse(stop_loss_hit_count=stop_loss_hit_count)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

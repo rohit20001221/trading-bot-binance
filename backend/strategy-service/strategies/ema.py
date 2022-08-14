@@ -2,8 +2,10 @@ from entities.strategy import Strategy
 from talib.abstract import EMA, SMA
 import numpy as np
 from binance.enums import ORDER_TYPE_MARKET, SIDE_BUY, SIDE_SELL
-from collections import defaultdict
 import os
+from portfolio_pb2 import (
+    Position, GetPositionRequest, OrderRequest, ClearPositionRequest, StopLossHitCountRequest, IncrementStopLossHitRequest
+)
 
 class EMAStrategy(Strategy):
     def __init__(self, *args, **kwargs) -> None:
@@ -14,8 +16,6 @@ class EMAStrategy(Strategy):
         self.stop_loss_percentage = 0.01
 
         self.current_stop_loss = 0
-        self.positions = defaultdict(float)
-
         self.stop_loss_hit_count = 0
 
     def calculate_position_sizing_and_stop_loss(self, current_price):
@@ -25,9 +25,9 @@ class EMAStrategy(Strategy):
         return loss_amount / stop_loss, stop_loss
 
     def update_stop_loss_hit_count(self):
-        self.stop_loss_hit_count += 1
+        self.portfolio_client.IncrementStopLoss(IncrementStopLossHitRequest())
 
-        if self.stop_loss_hit_count >= 2:
+        if self.portfolio_client.GetStopLossHitCount(StopLossHitCountRequest()) >= 2:
             print('[**] Max Loss Reached')
             exit(0)
 
@@ -45,48 +45,47 @@ class EMAStrategy(Strategy):
         latest_ema200 = ema200[-1]
         latest_ema150 = ema150[-1]
 
-        print(latest_ema200, latest_ema150, is_close_ema, ema_gradient, latest_volume, latest_volume_average)
-
         if is_close_ema:
             if ema_gradient > 0 and latest_ema150 > latest_ema200 and latest_volume > latest_volume_average:
                 quantity, stop_loss = self.calculate_position_sizing_and_stop_loss(live['close'])
 
-                self.notify(
-                    "entry signal",
-                    f"{latest_ema200}, {latest_ema150}, {is_close_ema}, {ema_gradient}, {latest_volume}, {latest_volume_average}"
-                )
-
                 try:
-                    self.client.create_order(
-                        symbol=live['symbol'],
-                        type=ORDER_TYPE_MARKET,
-                        side=SIDE_BUY,
-                        quantity=quantity
-                    )
-
                     self.current_stop_loss = stop_loss
-                    self.positions[live['symbol']] += quantity
+
+                    self.portfolio_client.UpdatePosition(
+                        Position(symbol=live['symbol'], quantity=quantity)
+                    )
+                    self.portfolio_client.CreateOrder(
+                        OrderRequest(
+                            symbol=live["symbol"],
+                            quantity=quantity,
+                            side=SIDE_BUY,
+                            stoploss=stop_loss,
+                            type=ORDER_TYPE_MARKET
+                        )
+                    )
                 except:
                     self.current_stop_loss = 0
 
     def handle_live_data(self, live):
-        if live['close'] <= self.current_stop_loss and self.positions[live['symbol']] > 0:
+        position = self.portfolio_client.GetPosition(GetPositionRequest(symbol=live["symbol"]))
+
+        if live['close'] <= self.current_stop_loss and position.quantity > 0:
             # exit the trade
-            quantity = self.positions[live['symbol']]
+            quantity = position.quantity
 
             self.update_stop_loss_hit_count()
-            try:
-                self.client.create_order(
-                    symbol=live['symbol'],
-                    type=ORDER_TYPE_MARKET,
+            self.portfolio_client.CreateOrder(
+            OrderRequest(
+                    symbol=live["symbol"],
+                    quantity=quantity,
                     side=SIDE_SELL,
-                    quantity=quantity
+                    type=ORDER_TYPE_MARKET
                 )
-            except:
-                return
-            finally:
-                self.positions.pop(live['symbol'])
-                self.current_stop_loss = 0
+            )
+
+            self.portfolio_client.ClearPosition(ClearPositionRequest(symbol=live["symbol"]))
+            self.current_stop_loss = 0
 
 if __name__ == '__main__':
     API_KEY=os.environ['API_KEY']
