@@ -9,3 +9,5 @@ services:
     build: ./strategy-service
     env_file:
       - .env
+  redis_server:
+    image: redis/redis-stack:latest

@@ -104,5 +104,5 @@ class EMAStrategy(Strategy):
                     f"EXIT:- {quantity} {live['close']} REASON:- Stop Loss"
                 )
 
-ema = EMAStrategy(API_KEY, API_SECRET, 'ema-200-500', True)
+ema = EMAStrategy(API_KEY, API_SECRET, os.environ['CHANNEL_NAME'], True)
 ema.start()
