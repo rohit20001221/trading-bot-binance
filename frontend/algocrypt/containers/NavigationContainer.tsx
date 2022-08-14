@@ -4,6 +4,7 @@ import { StatusBar } from "react-native";
 export type IRoute = {
   [route: string]: {
     component: ReactNode;
+    header?: ReactNode;
   };
 };
 
@@ -33,6 +34,7 @@ export const NavigationProvider: FC<NavigationProviderProps> = ({ routes }) => {
   return (
     <NavigationContext.Provider value={{ routes, navigate }}>
       <StatusBar />
+      {currentRoute && routes[currentRoute].header}
       {currentRoute && routes[currentRoute].component}
     </NavigationContext.Provider>
   );
