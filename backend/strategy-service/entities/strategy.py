@@ -5,7 +5,7 @@ import numpy as np
 import subprocess
 
 class Strategy:
-    def __init__(self, api_key: str, api_secret: str, name: str, redis_host='127.0.0.1', redis_port=6379) -> None:
+    def __init__(self, api_key: str, api_secret: str, name: str, redis_host='redis_server', redis_port=6379) -> None:
         self.test_client : Client = Client(api_key, api_secret, testnet=True)
         self.client : Client = Client(api_key, api_secret)
 

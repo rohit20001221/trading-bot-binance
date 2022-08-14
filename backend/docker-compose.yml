@@ -4,10 +4,20 @@ services:
   live-data:
     build: ./live-data-service
     env_file:
-      - .env
+      - ./live-data-service/.env
+    volumes:
+      - ./live-data-service:/app
   strategies:
     build: ./strategy-service
+    volumes:
+      - ./strategy-service:/app
     env_file:
-      - .env
+      - ./strategy-service/.env
   redis_server:
     image: redis/redis-stack:latest
+
+    volumes:
+      - redis_cache:/data
+
+volumes:
+  redis_cache:

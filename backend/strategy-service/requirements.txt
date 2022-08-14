@@ -1,0 +1,7 @@
+TA-Lib
+websockets
+requests
+redis
+redis-om
+python-binance
+binance-futures-connector

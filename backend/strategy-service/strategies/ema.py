@@ -5,12 +5,6 @@ from binance.enums import ORDER_TYPE_MARKET, SIDE_BUY, SIDE_SELL
 from collections import defaultdict
 import os
 
-# In[2]:
-
-API_KEY=os.environ['API_KEY']
-API_SECRET=os.environ['API_SECRET']
-
-
 class EMAStrategy(Strategy):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -104,5 +98,9 @@ class EMAStrategy(Strategy):
                     f"EXIT:- {quantity} {live['close']} REASON:- Stop Loss"
                 )
 
-ema = EMAStrategy(API_KEY, API_SECRET, os.environ['CHANNEL_NAME'], True)
-ema.start()
+if __name__ == '__main__':
+    API_KEY=os.environ['API_KEY']
+    API_SECRET=os.environ['API_SECRET']
+
+    ema = EMAStrategy(API_KEY, API_SECRET, os.environ['CHANNEL_NAME'], True)
+    ema.start()
