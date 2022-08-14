@@ -7,15 +7,11 @@ services:
       dockerfile: live-data-service/Dockerfile
     env_file:
       - live-data-service/.env
-    volumes:
-      - live-data-service:/app
 
   strategies:
     build:
       context: .
       dockerfile: strategy-service/Dockerfile
-    volumes:
-      - strategy-service:/app
     env_file:
       - strategy-service/.env
 
@@ -23,8 +19,6 @@ services:
     build:
       context: .
       dockerfile: portfolio-service/Dockerfile
-    volumes:
-      - portfolio-service:/app
 
   redis_server:
     image: redis/redis-stack:latest
