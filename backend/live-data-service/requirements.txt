@@ -2,3 +2,5 @@ websockets
 requests
 redis
 redis-om
+grpcio
+grpcio-tools

@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+message OHLC {
+    string symbol = 1;
+    double open = 2;
+    double high = 3;
+    double low = 4;
+    double close = 5;
+    double volume = 6;
+}
+
+message AddOHLCRequest {
+    string symbol = 1;
+    OHLC ohlc = 2;
+}
+
+message AddOHLCResponse {}
+
+message GetHistoricalDataRequest {
+    string symbol = 1;
+}
+
+message GetHistoricalDataResponse {
+    repeated OHLC data = 1;
+}
+
+message ClearHistoricalDataRequest {
+    string symbol = 1;
+}
+
+message ClearHistoricalDataResponse {}
+
+service HistoricalDataService {
+    rpc AddOHLC (AddOHLCRequest) returns (AddOHLCResponse);
+    rpc GetHistoricalData (GetHistoricalDataRequest) returns (GetHistoricalDataResponse);
+    rpc ClearHistoricalData (ClearHistoricalDataRequest) returns (ClearHistoricalDataResponse);
+}

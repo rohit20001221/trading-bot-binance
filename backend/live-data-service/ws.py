@@ -1,8 +1,16 @@
 import asyncio
 import websockets
 import json
-from redis import Redis
+from config import redis
 import os
+import grpc
+
+from historical_data_pb2_grpc import HistoricalDataServiceStub
+from historical_data_pb2 import (
+    AddOHLCRequest,
+    ClearHistoricalDataRequest,
+    OHLC
+)
 
 socket_address = 'wss://stream.binance.com:9443'
 symbol = os.environ['SYMBOL']
@@ -10,16 +18,24 @@ interval = os.environ['INTERVAL']
 
 binance_endpoint = socket_address + '/ws/' + symbol + '@' + 'kline_' + interval
 
-REDIS_HOST = 'redis_server'
-REDIS_PORT = 6379
-redis = Redis(REDIS_HOST, REDIS_PORT, decode_responses=True)
-
 channels = [
     os.environ['CHANNEL_NAME'],
 ]
 
 async def get_live_data():
     async with websockets.connect(binance_endpoint) as websocket:
+        historical_data_grpc_channel = grpc.insecure_channel('historical-data:50051')
+        historical_data_client = HistoricalDataServiceStub(historical_data_grpc_channel)
+
+        # clear the historical data
+        historical_data_client.ClearHistoricalData(
+            ClearHistoricalDataRequest(
+                symbol=symbol
+            )
+        )
+
+        # fetch the historical data from the api and store it in the database
+
         while True:
             try:
                 data = await websocket.recv()
@@ -34,6 +50,20 @@ async def get_live_data():
                 'open': o, 'high': h, 'low': l, 'close': c,
                 'volume': v, 'is_interval': x, "symbol": symbol.upper(), "interval": interval
             })
+
+            if x:
+                historical_data_client.AddOHLC(
+                    symbol=symbol,
+                    ohlc=AddOHLCRequest(
+                        ohlc = OHLC(
+                            open=o,
+                            high=h,
+                            low=l,
+                            close=c,
+                            volume=v
+                        ),
+                    )
+                )
 
             for channel in channels:
                 redis.publish(channel, data)

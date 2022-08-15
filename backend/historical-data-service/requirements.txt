@@ -1,0 +1,4 @@
+grpcio
+grpcio-tools
+redis
+redis-om
