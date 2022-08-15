@@ -53,8 +53,7 @@ async def get_live_data():
 
             if x:
                 historical_data_client.AddOHLC(
-                    symbol=symbol,
-                    ohlc=AddOHLCRequest(
+                    AddOHLCRequest(
                         ohlc = OHLC(
                             open=o,
                             high=h,
@@ -62,6 +61,7 @@ async def get_live_data():
                             close=c,
                             volume=v
                         ),
+                        symbol=symbol,
                     )
                 )
 

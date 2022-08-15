@@ -1,5 +1,7 @@
 FROM python:3.8-slim-buster
 
+EXPOSE 50051
+
 WORKDIR /app
 
 COPY historical-data-service .
