@@ -20,7 +20,7 @@ class Strategy:
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(self.name)
 
-        self.portfolio_grpc_channel = grpc.insecure_channel("portfolio:50051", )
+        self.portfolio_grpc_channel = grpc.insecure_channel("portfolio:50051")
         self.portfolio_client = PortfolioServiceStub(self.portfolio_grpc_channel)
 
     def handle_kline_data(self, klines, live):
