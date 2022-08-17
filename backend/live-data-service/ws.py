@@ -66,13 +66,6 @@ async def get_live_data():
                     )
                 )
 
-                _data = historical_data_client.GetHistoricalData(
-                    GetHistoricalDataRequest(
-                        symbol=symbol
-                    )
-                )
-                print(_data)
-
             for channel in channels:
                 redis.publish(channel, data)
 
