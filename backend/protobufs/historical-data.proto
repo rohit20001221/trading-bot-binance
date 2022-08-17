@@ -20,8 +20,16 @@ message GetHistoricalDataRequest {
     string symbol = 1;
 }
 
+message GetHistoricalDataOHLC {
+    double open = 1;
+    double high = 2;
+    double low = 3;
+    double close = 4;
+    double volume = 5;
+}
+
 message GetHistoricalDataResponse {
-    repeated OHLC data = 1;
+    repeated GetHistoricalDataOHLC data = 1;
 }
 
 message ClearHistoricalDataRequest {

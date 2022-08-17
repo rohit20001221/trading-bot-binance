@@ -1,8 +1,8 @@
-from redis_om import HashModel, Field
+from redis_om import JsonModel
 from config import redis
 
-class OHLC(HashModel):
-    symbol : str = Field(index=True)
+class OHLC(JsonModel):
+    symbol : str
     open: float
     high: float
     low: float

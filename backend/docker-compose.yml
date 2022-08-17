@@ -35,6 +35,8 @@ services:
       dockerfile: portfolio-service/Dockerfile
     volumes:
       - ./portfolio-service:/app
+    depends_on:
+      - redis_server
 
   redis_server:
     image: redis/redis-stack:latest
@@ -42,6 +44,8 @@ services:
       - "8002:8001"
     volumes:
       - redis_cache:/data
+    logging:
+      driver: none
 
 volumes:
   redis_cache:

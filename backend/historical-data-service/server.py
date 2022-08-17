@@ -5,30 +5,43 @@ from historical_data_pb2 import (
     AddOHLCResponse,
     ClearHistoricalDataResponse,
     GetHistoricalDataResponse,
+    GetHistoricalDataOHLC
 )
 import historical_data_pb2_grpc
-from models import OHLC
+from config import redis
 
 class HistoricalDataService(historical_data_pb2_grpc.HistoricalDataServiceServicer):
     def AddOHLC(self, request, context):
-        ohlc = OHLC(
-            symbol=request.symbol,
-            open=request.open,
-            high=request.high,
-            low=request.low,
-            close=request.close,
-            volume=request.volume
-        )
-        ohlc.save()
+        ohlc = request.ohlc
+
+        data = {
+            "open": ohlc.open,
+            "high": ohlc.high,
+            "low": ohlc.low,
+            "close": ohlc.close,
+            "volume": ohlc.volume
+        }
+        redis.json().arrappend(f"historical-{request.symbol}", "$", data)
 
         return AddOHLCResponse()
 
     def GetHistoricalData(self, request, context):
-        return super().GetHistoricalData(request, context)
+        response = []
+        for data in redis.json().get(f"historical-{request.symbol}", "$")[0]:
+            response.append(
+                GetHistoricalDataOHLC(
+                    open=data['open'],
+                    high=data['high'],
+                    low=data['low'],
+                    close=data['close'],
+                    volume=data['volume']
+                )
+            )
+
+        return GetHistoricalDataResponse(data=response)
 
     def ClearHistoricalData(self, request, context):
-        try: OHLC.find((OHLC.symbol == request.symbol)).delete()
-        except: pass
+        redis.json().set(f"historical-{request.symbol}", "$", [])
 
         return ClearHistoricalDataResponse()
 

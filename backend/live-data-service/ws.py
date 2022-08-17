@@ -9,7 +9,8 @@ from historical_data_pb2_grpc import HistoricalDataServiceStub
 from historical_data_pb2 import (
     AddOHLCRequest,
     ClearHistoricalDataRequest,
-    OHLC
+    OHLC,
+    GetHistoricalDataRequest
 )
 
 socket_address = 'wss://stream.binance.com:9443'
@@ -64,6 +65,13 @@ async def get_live_data():
                         symbol=symbol,
                     )
                 )
+
+                _data = historical_data_client.GetHistoricalData(
+                    GetHistoricalDataRequest(
+                        symbol=symbol
+                    )
+                )
+                print(_data)
 
             for channel in channels:
                 redis.publish(channel, data)
