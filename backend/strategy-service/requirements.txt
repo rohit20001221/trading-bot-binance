@@ -7,3 +7,4 @@ python-binance
 binance-futures-connector
 grpcio
 grpcio-tools
+pushbullet-python

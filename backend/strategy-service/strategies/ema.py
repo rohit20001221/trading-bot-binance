@@ -50,6 +50,10 @@ class EMAStrategy(Strategy):
                 quantity, stop_loss = self.calculate_position_sizing_and_stop_loss(live['close'])
 
                 try:
+                    self.notifier.send_note(
+                        "Entry Signal", live["symbol"]
+                    )
+
                     self.current_stop_loss = stop_loss
 
                     self.portfolio_client.UpdatePosition(
@@ -71,6 +75,11 @@ class EMAStrategy(Strategy):
         position = self.portfolio_client.GetPosition(GetPositionRequest(symbol=live["symbol"]))
 
         if live['close'] <= self.current_stop_loss and position.quantity > 0:
+            try:
+                self.notifier.send_note("Stop Loss", live["symbol"])
+            except:
+                pass
+
             # exit the trade
             quantity = position.quantity
 
