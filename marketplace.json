@@ -1,0 +1,25 @@
+{
+    "app_name": "Crypto Bot",
+    "description": "crypto bot uses algorithmic trading to generate the buy and sell signals for crypto trading",
+    "contributed_by": "rohit20001221",
+    "repo_url": "https://github.com/rohit20001221/trading-bot-binance",
+    "deploy_buttons": [],
+    "language": ["en"],
+    "redis_commands": [
+        "SUBSCRIBE <channel-name>",
+        "JSON.GET historical-<tradingsymbol> '$'"
+    ],
+    "redis_features": [
+        "caching",
+        "json",
+        "pubsub"
+    ],
+    "redis_modules": [
+        "json"
+    ],
+    "app_image_urls": [],
+    "youtube_url": "",
+    "special_tags": ["redis", "pubsub", "crypto", "trading"],
+    "verticals": [],
+    "markdown": ""
+}

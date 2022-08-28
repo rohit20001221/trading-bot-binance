@@ -1,0 +1,7 @@
+{
+  "name": "Crypto Bot",
+  "description": "Algo Trade Bot using Redis Stack as backend",
+  "repository": "https://github.com/rohit20001221/trading-bot-binance",
+  "logo": "",
+  "keywords": ["python", "redis", "crypto", "trading"]
+}
